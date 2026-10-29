@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HONG Personality Quiz</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --red: #E53935;
+    --orange: #FF9800;
+    --green: #43A047;
+    --blue: #1E88E5;
+    --bg: #f5f0ff;
+    --card: #ffffff;
+    --shadow: 0 8px 32px rgba(80,60,120,0.10);
+  }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+
+  .container {
+    max-width: 520px;
+    width: 100%;
+  }
+
+  /* ===== INTRO SCREEN ===== */
+  #intro {
+    text-align: center;
+    background: var(--card);
+    border-radius: 24px;
+    padding: 40px 28px;
+    box-shadow: var(--shadow);
+  }
+
+  #intro img {
+    width: 100%;
+    max-width: 400px;
+    border-radius: 16px;
+    margin-bottom: 24px;
+  }
+
+  #intro h1 {
+    font-size: 2rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--red), var(--orange), var(--green), var(--blue));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 12px;
+  }
+
+  #intro p {
+    color: #555;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+
+  #intro .subtitle {
+    font-size: 0.82rem;
+    color: #999;
+    font-style: italic;
+    margin-bottom: 28px;
+  }
+
+  .btn-start {
+    background: linear-gradient(135deg, var(--red), var(--orange));
+    color: white;
+    border: none;
+    padding: 16px 48px;
+    font-size: 1.1rem;
+    font-weight: 800;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    font-family: inherit;
+  }
+
+  .btn-start:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(229,57,53,0.3);
+  }
+
+  /* ===== QUIZ SCREEN ===== */
+  #quiz {
+    display: none;
+  }
+
+  .quiz-card {
+    background: var(--card);
+    border-radius: 24px;
+    padding: 36px 28px;
+    box-shadow: var(--shadow);
+    text-align: center;
+  }
+
+  .progress-bar-wrapper {
+    width: 100%;
+    height: 8px;
+    background: #e8e0f0;
+    border-radius: 4px;
+    margin-bottom: 28px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--red), var(--orange), var(--green), var(--blue));
+    border-radius: 4px;
+    transition: width 0.4s ease;
+  }
+
+  .question-counter {
+    font-size: 0.85rem;
+    color: #aaa;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .question-text {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 28px;
+  }
+
+  .choices {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .btn-back {
+    margin-top: 20px;
+    background: none;
+    border: none;
+    color: #aaa;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: color 0.2s;
+    padding: 8px 16px;
+  }
+
+  .btn-back:hover {
+    color: #666;
+  }
+
+  .btn-back.hidden {
+    visibility: hidden;
+  }
+
+  .choice-btn {
+    background: #f8f5ff;
+    border: 2px solid #e8e0f0;
+    border-radius: 16px;
+    padding: 18px 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+    font-family: inherit;
+  }
+
+  .choice-btn:hover {
+    border-color: #c4b0e0;
+    background: #f0eaff;
+    transform: translateY(-1px);
+  }
+
+  .choice-btn:active {
+    transform: scale(0.98);
+  }
+
+  .choice-btn .trait-name {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #333;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .choice-btn .trait-desc {
+    font-size: 0.85rem;
+    color: #888;
+    font-weight: 400;
+  }
+
+  /* ===== RESULT SCREEN ===== */
+  #result {
+    display: none;
+    text-align: center;
+  }
+
+  .result-card {
+    background: var(--card);
+    border-radius: 24px;
+    padding: 40px 28px;
+    box-shadow: var(--shadow);
+  }
+
+  .result-card h2 {
+    font-size: 1rem;
+    color: #999;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .result-character {
+    font-size: 2.2rem;
+    font-weight: 900;
+    margin-bottom: 4px;
+  }
+
+  .result-tagline {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #666;
+    margin-bottom: 20px;
+  }
+
+  .result-mascot {
+    width: 220px;
+    height: 220px;
+    border-radius: 24px;
+    object-fit: cover;
+    margin-bottom: 24px;
+    border: 4px solid #eee;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  }
+
+  .result-desc {
+    font-size: 0.95rem;
+    color: #555;
+    line-height: 1.7;
+    margin-bottom: 28px;
+    text-align: left;
+    padding: 0 4px;
+  }
+
+  .result-traits {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 28px;
+  }
+
+  .result-traits span {
+    padding: 6px 16px;
+    border-radius: 50px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: white;
+  }
+
+  .btn-restart {
+    background: #e8e0f0;
+    color: #666;
+    border: none;
+    padding: 14px 40px;
+    font-size: 1rem;
+    font-weight: 700;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+
+  .btn-restart:hover {
+    background: #d8d0e8;
+    transform: translateY(-1px);
+  }
+
+  /* ===== ANIMATIONS ===== */
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .fade-in {
+    animation: fadeInUp 0.4s ease forwards;
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 480px) {
+    #intro { padding: 28px 20px; }
+    #intro h1 { font-size: 1.6rem; }
+    .quiz-card { padding: 28px 20px; }
+    .result-card { padding: 28px 20px; }
+    .result-character { font-size: 1.8rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- INTRO -->
+  <div id="intro" class="fade-in">
+    <img src="mascot.jpg" alt="HONG Characters" onerror="this.style.display='none'">
+    <h1>HONG Personality Quiz</h1>
+    <p>Temukan gaya kepribadianmu dalam dunia digital business!<br>
+    Pilih sifat yang paling menggambarkan dirimu dari 18 pasangan berikut.</p>
+    <p class="subtitle">HONG dirancang untuk refleksi diri & pembelajaran, bukan diagnosis klinis.</p>
+    <button class="btn-start" onclick="startQuiz()">Mulai Quiz →</button>
+  </div>
+
+  <!-- QUIZ -->
+  <div id="quiz">
+    <div class="quiz-card">
+      <div class="progress-bar-wrapper">
+        <div class="progress-bar-fill" id="progressBar"></div>
+      </div>
+      <div class="question-counter" id="questionCounter"></div>
+      <div class="question-text">Mana yang lebih menggambarkan dirimu?</div>
+      <div class="choices" id="choices"></div>
+      <button class="btn-back" id="btnBack" onclick="goBack()">← Kembali</button>
+    </div>
+  </div>
+
+  <!-- RESULT -->
+  <div id="result">
+    <div class="result-card fade-in" id="resultCard">
+      <h2>Kepribadian dominanmu adalah...</h2>
+      <div class="result-character" id="resultCharacter"></div>
+      <div class="result-tagline" id="resultTagline"></div>
+      <img class="result-mascot" id="resultMascot" alt="mascot" onerror="this.style.display='none'">
+      <div class="result-desc" id="resultDesc"></div>
+      <div class="result-traits" id="resultTraits"></div>
+      <button class="btn-restart" onclick="restartQuiz()">🔄 Ulangi Quiz</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ===== QUESTIONS DATA =====
+// 6 pairs × 3 rounds = 18 questions
+// Each question: [traitA_label, traitA_desc, charA, traitB_label, traitB_desc, charB]
+const allQuestions = [
+  // ---- ROUND 1 ----
+  // H vs O
+  ["Decisive", "Cepat mengambil keputusan", "H", "Enthusiastic", "Penuh semangat & antusias", "O"],
+  // H vs N
+  ["Competitive", "Suka tantangan & kompetisi", "H", "Cooperative", "Lebih suka bekerja sama", "N"],
+  // H vs G
+  ["Action-oriented", "Langsung bertindak", "H", "Detail-oriented", "Teliti & memperhatikan detail", "G"],
+  // O vs N
+  ["Outgoing", "Senang bertemu banyak orang", "O", "Calm", "Tenang & kalem", "N"],
+  // O vs G
+  ["Optimistic", "Selalu melihat sisi positif", "O", "Cautious", "Hati-hati & penuh pertimbangan", "G"],
+  // N vs G
+  ["Empathetic", "Peka terhadap perasaan orang lain", "N", "Logical", "Mengandalkan logika & data", "G"],
+
+  // ---- ROUND 2 ----
+  // H vs O
+  ["Result-driven", "Fokus pada hasil akhir", "H", "People-oriented", "Fokus pada hubungan dengan orang", "O"],
+  // H vs N
+  ["Bold", "Berani mengambil risiko", "H", "Patient", "Sabar & tidak terburu-buru", "N"],
+  // H vs G
+  ["Fast-paced", "Suka tempo kerja cepat", "H", "Methodical", "Suka bekerja secara terstruktur", "G"],
+  // O vs N
+  ["Spontaneous", "Mudah beradaptasi & fleksibel", "O", "Consistent", "Stabil & bisa diandalkan", "N"],
+  // O vs G
+  ["Flexible", "Tidak kaku terhadap aturan", "O", "Structured", "Suka sistem & prosedur", "G"],
+  // N vs G
+  ["Harmonious", "Menjaga keharmonisan tim", "N", "Accurate", "Mengutamakan keakuratan", "G"],
+
+  // ---- ROUND 3 ----
+  // H vs O
+  ["Direct", "Terus terang & to the point", "H", "Expressive", "Suka berbagi cerita & ide", "O"],
+  // H vs N
+  ["Risk-taker", "Berani mencoba hal baru", "H", "Supportive", "Mendukung & membantu orang lain", "N"],
+  // H vs G
+  ["Assertive", "Tegas dalam menyampaikan pendapat", "H", "Analytical", "Menganalisis sebelum bertindak", "G"],
+  // O vs N
+  ["Talkative", "Senang mengobrol & berdiskusi", "O", "Listening", "Lebih suka mendengarkan", "N"],
+  // O vs G
+  ["Persuasive", "Pandai meyakinkan orang lain", "O", "Precise", "Tepat & tidak ambigu", "G"],
+  // N vs G
+  ["Team-player", "Mengutamakan kerja tim", "N", "Independent", "Suka bekerja mandiri & fokus", "G"],
+];
+
+// ===== CHARACTER DATA =====
+const characters = {
+  H: {
+    emoji: "🔴",
+    name: "H — Hunter",
+    tagline: "Bold, Decisive, Goal-Focused",
+    color: "#E53935",
+    mascotImg: "mascot_h.jpg",
+    desc: "Kamu adalah seorang <b>Hunter</b>! Kamu memiliki dorongan kuat untuk mencapai tujuan, tidak takut mengambil keputusan sulit, dan selalu fokus pada hasil. Kamu memimpin dengan keberanian dan ketegasan. Dalam tim, kamu adalah motor penggerak yang membawa semua orang menuju target.",
+    traits: ["Decisive", "Result-driven", "Bold", "Direct", "Action-oriented"],
+  },
+  O: {
+    emoji: "🟠",
+    name: "O — Outreacher",
+    tagline: "Sociable, Expressive, Persuasive",
+    color: "#FF9800",
+    mascotImg: "mascot_o.jpg",
+    desc: "Kamu adalah seorang <b>Outreacher</b>! Kamu memiliki energi sosial yang luar biasa, pandai berkomunikasi, dan bisa meyakinkan orang lain dengan antusiasme-mu. Kamu membawa semangat ke dalam tim dan selalu melihat peluang di setiap situasi.",
+    traits: ["Enthusiastic", "People-oriented", "Optimistic", "Expressive", "Persuasive"],
+  },
+  N: {
+    emoji: "🟢",
+    name: "N — Nurturer",
+    tagline: "Caring, Patient, Supportive",
+    color: "#43A047",
+    mascotImg: "mascot_n.jpg",
+    desc: "Kamu adalah seorang <b>Nurturer</b>! Kamu memiliki empati yang tinggi, sabar, dan selalu mendukung orang-orang di sekitarmu. Kamu menjaga keharmonisan tim dan bisa diandalkan dalam situasi apa pun. Stabilitas dan konsistensimu adalah kekuatan terbesarmu.",
+    traits: ["Cooperative", "Patient", "Calm", "Supportive", "Team-player"],
+  },
+  G: {
+    emoji: "🔵",
+    name: "G — Guardian",
+    tagline: "Careful, Logical, Detail-Oriented",
+    color: "#1E88E5",
+    mascotImg: "mascot_g.jpg",
+    desc: "Kamu adalah seorang <b>Guardian</b>! Kamu memiliki ketelitian luar biasa, berpikir logis, dan selalu mengutamakan kualitas. Kamu adalah orang yang memastikan semua berjalan sesuai rencana dengan standar tinggi. Analisis dan struktur adalah kekuatanmu.",
+    traits: ["Detail-oriented", "Methodical", "Logical", "Analytical", "Precise"],
+  },
+};
+
+// ===== QUIZ STATE =====
+let scores = { H: 0, O: 0, N: 0, G: 0 };
+let currentQ = 0;
+let shuffledQuestions = [];
+let answerHistory = []; // track answers for back button
+
+function shuffleArray(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startQuiz() {
+  scores = { H: 0, O: 0, N: 0, G: 0 };
+  currentQ = 0;
+  answerHistory = [];
+
+  // Shuffle question order
+  shuffledQuestions = shuffleArray(allQuestions).map(q => {
+    // Also randomly swap option A and B position
+    if (Math.random() > 0.5) {
+      return [q[3], q[4], q[5], q[0], q[1], q[2]];
+    }
+    return [...q];
+  });
+
+  document.getElementById('intro').style.display = 'none';
+  document.getElementById('result').style.display = 'none';
+  document.getElementById('quiz').style.display = 'block';
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = shuffledQuestions[currentQ];
+  const total = shuffledQuestions.length;
+
+  document.getElementById('questionCounter').textContent =
+    `Pertanyaan ${currentQ + 1} dari ${total}`;
+
+  document.getElementById('progressBar').style.width =
+    `${((currentQ) / total) * 100}%`;
+
+  // Show/hide back button
+  const btnBack = document.getElementById('btnBack');
+  if (currentQ === 0) {
+    btnBack.classList.add('hidden');
+  } else {
+    btnBack.classList.remove('hidden');
+  }
+
+  const choicesEl = document.getElementById('choices');
+  choicesEl.innerHTML = '';
+  choicesEl.className = 'choices fade-in';
+
+  // Option A
+  const btnA = document.createElement('button');
+  btnA.className = 'choice-btn';
+  btnA.innerHTML = `<span class="trait-name">${q[0]}</span><span class="trait-desc">${q[1]}</span>`;
+  btnA.onclick = () => selectChoice(q[2]);
+  choicesEl.appendChild(btnA);
+
+  // Option B
+  const btnB = document.createElement('button');
+  btnB.className = 'choice-btn';
+  btnB.innerHTML = `<span class="trait-name">${q[3]}</span><span class="trait-desc">${q[4]}</span>`;
+  btnB.onclick = () => selectChoice(q[5]);
+  choicesEl.appendChild(btnB);
+}
+
+function selectChoice(char) {
+  answerHistory.push(char); // save answer
+  scores[char]++;
+  currentQ++;
+
+  if (currentQ >= shuffledQuestions.length) {
+    showResult();
+  } else {
+    renderQuestion();
+  }
+}
+
+function goBack() {
+  if (currentQ <= 0) return;
+  currentQ--;
+  const prevAnswer = answerHistory.pop();
+  scores[prevAnswer]--; // undo the score
+  renderQuestion();
+}
+
+function showResult() {
+  document.getElementById('quiz').style.display = 'none';
+
+  // Find dominant character
+  const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+  const winner = sorted[0][0];
+  const charData = characters[winner];
+
+  // Apply character color theme
+  const card = document.getElementById('resultCard');
+  card.style.borderTop = `5px solid ${charData.color}`;
+
+  document.getElementById('resultCharacter').textContent =
+    `${charData.emoji} ${charData.name}`;
+  document.getElementById('resultCharacter').style.color = charData.color;
+
+  document.getElementById('resultTagline').textContent = charData.tagline;
+  document.getElementById('resultDesc').innerHTML = charData.desc;
+
+  // Mascot image
+  const mascotEl = document.getElementById('resultMascot');
+  mascotEl.src = charData.mascotImg;
+  mascotEl.style.borderColor = charData.color;
+
+  // Trait badges
+  const traitsEl = document.getElementById('resultTraits');
+  traitsEl.innerHTML = '';
+  charData.traits.forEach(t => {
+    const badge = document.createElement('span');
+    badge.textContent = t;
+    badge.style.background = charData.color;
+    traitsEl.appendChild(badge);
+  });
+
+  document.getElementById('result').style.display = 'block';
+
+  // Animate progress bar to full
+  document.getElementById('progressBar').style.width = '100%';
+}
+
+function restartQuiz() {
+  document.getElementById('result').style.display = 'none';
+  document.getElementById('intro').style.display = 'block';
+}
+</script>
+
+</body>
+</html>
